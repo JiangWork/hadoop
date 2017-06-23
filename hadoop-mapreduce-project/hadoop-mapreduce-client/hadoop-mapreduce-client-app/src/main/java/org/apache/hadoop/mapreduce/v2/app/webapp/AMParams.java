@@ -31,4 +31,5 @@ public interface AMParams {
   static final String ATTEMPT_STATE = "attempt.state";
   static final String COUNTER_GROUP = "counter.group";
   static final String COUNTER_NAME = "counter.name";
+  static final String NODE_ID = "node.id";
 }
