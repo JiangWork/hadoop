@@ -47,5 +47,6 @@ public class AMWebApp extends WebApp implements AMParams {
     route(pajoin("/taskcounters", TASK_ID), AppController.class, "taskCounters");
     route(pajoin("/singletaskcounter",TASK_ID, COUNTER_GROUP, COUNTER_NAME),
         AppController.class, "singleTaskCounter");
+    route(pajoin("/dump", NODE_ID, CONTAINER_ID), AppController.class, "dump");
   }
 }

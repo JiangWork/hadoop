@@ -21,6 +21,9 @@ package org.apache.hadoop.mapreduce.v2.app.webapp;
 import static org.apache.hadoop.yarn.util.StringHelper.join;
 
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
 import java.net.URLDecoder;
 
 import javax.servlet.http.HttpServletResponse;
@@ -260,6 +263,33 @@ public class AppController extends Controller implements AMParams {
       setTitle(join("Attempts for ", $(TASK_ID)));
     }
     render(taskPage());
+  }
+  
+  /**
+   * Render the /dump
+   */
+  public void dump() {
+	  String node = $(NODE_ID);
+	  String container = $(CONTAINER_ID);
+//	  //renderText("Hello, This is Node dump Message for node: " + nodeInfo + "\n" + result);
+//	  String[] fields = nodeInfo.split("+");
+//	  String host = fields[0];
+	  int index = node.lastIndexOf(":");
+	  String host = node.substring(0, index);
+//	  String tag = fields[1];
+//	  System.out.println("Host: " + host + " tag: " + tag);
+	  String result = null;
+	  try {
+		  Socket socket = new Socket(host, 32100);
+		  ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+		  oos.writeObject(container);
+		  ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+		  result = (String)ois.readObject();
+		  socket.close();
+	  } catch(Exception e) {
+		 result = e.toString(); 
+	  }
+	  renderText("Requiring node: " + node + " containerId: " + container + "\n" + result);
   }
 
   /**

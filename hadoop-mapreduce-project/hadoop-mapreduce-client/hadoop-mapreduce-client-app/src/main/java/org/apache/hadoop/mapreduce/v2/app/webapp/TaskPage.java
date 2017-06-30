@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.mapreduce.v2.app.webapp;
 
+import static org.apache.hadoop.mapreduce.v2.app.webapp.AMParams.JOB_ID;
 import static org.apache.hadoop.yarn.util.StringHelper.percent;
 import static org.apache.hadoop.yarn.webapp.view.JQueryUI.ACCORDION;
 import static org.apache.hadoop.yarn.webapp.view.JQueryUI.DATATABLES;
@@ -69,7 +70,8 @@ public class TaskPage extends AppView {
             th(".tsh", "Started").
             th(".tsh", "Finished").
             th(".tsh", "Elapsed").
-            th(".note", "Note")._()._().
+            th(".note", "Note").
+            td(".extra", "Extra")._()._().
       tbody();
       // Write all the data into a JavaScript array of arrays for JQuery
       // DataTables to display
@@ -103,7 +105,9 @@ public class TaskPage extends AppView {
         .append(ta.getFinishTime()).append("\",\"")
         .append(ta.getElapsedTime()).append("\",\"")
         .append(StringEscapeUtils.escapeJavaScript(StringEscapeUtils.escapeHtml(
-          diag))).append("\"],\n");
+          diag))).append("\",\"")
+        .append(nodeHttpAddr == null ? "N/A" :  "<a class='extralink' href='" + url("dump", getNodeHost(nodeHttpAddr), ta.getAssignedContainerIdStr()) + "'>"
+                + "dumpnode</a>").append("\"],\n");
       }
       //Remove the last comma and close off the array of arrays
       if(attemptsTableData.charAt(attemptsTableData.length() - 2) == ',') {
@@ -117,6 +121,11 @@ public class TaskPage extends AppView {
 
     }
 
+    private String getNodeHost(String nodeHttpAddr) {
+    	int index = nodeHttpAddr.lastIndexOf("/");
+    	return index == -1? nodeHttpAddr: nodeHttpAddr.substring(index + 1);
+    }
+    
     protected boolean isValidRequest() {
       return app.getTask() != null;
     }
