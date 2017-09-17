@@ -206,6 +206,8 @@ public class NodeInformationService extends AuxiliaryService {
 		bb.addLine("timeout 10s jstack $pid 2>&1");
 		bb.addLine("show \"Living Objects $pid\"");
 		bb.addLine("timeout 10s jmap -histo:live $pid |  head -n 20 ");
+		bb.addLine("show \"GC Counts $pid\"");
+		bb.addLine("timeout 10s jstat  -gcutil $pid 100 10 ");
 		bb.addLine("done");
 		return bb.collect();
 	}
